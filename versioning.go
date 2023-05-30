@@ -63,28 +63,64 @@ func (v *Versioning) Close() {
 	v.client.Disconnect(ctx)
 }
 
-func (v *Versioning) GetLatestVersion(filename string) (int, error) {
+func (v *Versioning) GetAllVersions(filename string) ([]Version, error) {
 	filter := bson.M{"filename": filename}
-	opts := options.FindOne().SetSort(bson.M{"versions.version": -1})
-	result := v.collection.FindOne(context.Background(), filter, opts)
-	if result.Err() == mongo.ErrNoDocuments {
-		return 0, nil
-	} else if result.Err() != nil {
-		return 0, result.Err()
+	opts := options.Find().SetSort(bson.M{"versions.version": 1})
+	cursor, err := v.collection.Find(context.Background(), filter, opts)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	var versions []Version
+	for cursor.Next(context.Background()) {
+		var fileMetadata VFileMetadata
+		err := cursor.Decode(&fileMetadata)
+		if err != nil {
+			return nil, err
+		}
+		versions = append(versions, fileMetadata.Versions...)
 	}
 
-	var fileMetadata VFileMetadata
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return versions, nil
+}
+
+func (v *Versioning) GetLatestVersion(filename string) (int, error) {
+	// Create a filter to match the desired filename
+	filter := bson.M{"filename": filename}
+
+	// Define the projection to retrieve only the latest version
+	projection := bson.M{"versions": bson.M{"$slice": -1}}
+
+	// Execute the query and retrieve the single result
+	result := v.collection.FindOne(context.Background(), filter, options.FindOne().SetProjection(projection).SetSort(bson.M{"versions.version": -1}))
+	if result.Err() == mongo.ErrNoDocuments {
+		return 0, nil // No documents found for the filename
+	} else if result.Err() != nil {
+		return 0, result.Err() // Error occurred during the query
+	}
+
+	// Decode the result into a structure that includes the version field
+	var fileMetadata struct {
+		Versions []struct {
+			Version int `bson:"version"`
+		} `bson:"versions"`
+	}
 	err := result.Decode(&fileMetadata)
 	if err != nil {
-		return 0, err
+		return 0, err // Error occurred during result decoding
 	}
 
-	latestVersion := 0
 	if len(fileMetadata.Versions) > 0 {
-		latestVersion = fileMetadata.Versions[0].Version
+		latestVersion := fileMetadata.Versions[0].Version
+		return latestVersion, nil
 	}
 
-	return latestVersion, nil
+	return 0, nil // No versions found for the filename
 }
 
 func (v *Versioning) CreateVersion(filename string, content string) error {

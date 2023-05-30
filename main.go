@@ -11,6 +11,21 @@ import (
 )
 
 func main() {
+	directory := "storageData"
+
+	// Check if the directory already exists
+	if _, err := os.Stat(directory); os.IsNotExist(err) {
+		// Create the directory
+		err := os.Mkdir(directory, 0755)
+		if err != nil {
+			fmt.Printf("Failed to create the directory: %s\n", err.Error())
+			return
+		}
+		//fmt.Println("Directory created successfully.")
+	} else {
+		//fmt.Println("Directory already exists.")
+	}
+
 	// Initialize virtual file system
 	versioning, err := NewVersioning()
 	baseDir := "./storageData" // Update the base directory path as per your requirement
@@ -53,13 +68,7 @@ func main() {
 		case "help":
 			printHelp()
 		case "debug":
-			filename := "123.txt"
-			latestVersion, err := versioning.GetLatestVersion(filename)
-			if err != nil {
-				fmt.Printf("Error getting latest version: %s\n", err.Error())
-				return
-			}
-			fmt.Printf("Latest version of file '%s': %d\n", filename, latestVersion)
+			fmt.Printf("** DEBUG **")
 		case "create":
 			if len(parts) != 3 {
 				fmt.Println("Invalid command. Usage: create <filename>")
@@ -207,6 +216,18 @@ func main() {
 				continue
 			}
 			fmt.Printf("Latest version of file '%s': %d\n", filename, latestVersion)
+
+			// Retrieve all previous versions of the file
+			previousVersions, err := versioning.GetAllVersions(filename)
+			if err != nil {
+				fmt.Printf("Error getting previous versions: %s\n", err.Error())
+				continue
+			}
+
+			// Print the content of each previous version
+			for _, version := range previousVersions {
+				fmt.Printf("Version %d content: %s\n", version.Version, version.Content)
+			}
 		default:
 			fmt.Println("Unknown command. Enter 'help' to see available commands.")
 		}
