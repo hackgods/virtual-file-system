@@ -58,7 +58,7 @@ go build
 - `decrypt <filename>` - Decrypt the content of a file
 - `cache <filename>` - Get the content of a file from cache
 - `version <filename>` - Get the latest version of a file
-- `exit - Exit the program
+- `exit` - Exit the program
 
 ## Contributing
 
