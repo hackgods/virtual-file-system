@@ -19,6 +19,11 @@ func NewFileSystem(baseDir string, versioning *Versioning) *FileSystem {
 	}
 }
 
+// UpdateBaseDir updates the base directory of the FileSystem.
+func (fs *FileSystem) UpdateBaseDir(newBaseDir string) {
+	fs.BaseDir = newBaseDir
+}
+
 func (fs *FileSystem) CreateFile(filename string, data []byte) error {
 	filePath := filepath.Join(fs.BaseDir, filename)
 
