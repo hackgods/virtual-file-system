@@ -47,7 +47,13 @@ go build
 
 🔧 Once the file versioning system is up and running, you can interact with it using the provided command-line interface (CLI). Here are some example commands:
 
-
+- `signup` - Create a new account.
+- `login` - Login to your account.
+- `cd <directory>` - Change the current working directory.
+- `pwd` - Print the current working directory.
+- `mkdir <directory>` - Create a new directory.
+- `rmdir <directory>` - Remove a directory.
+- `ls` - List the files and directories in the current directory.
 - `create <filename> <content>` - Create a new file
 - `read <filename>` - Read the content of a file
 - `update <filename> <content>` - Update the content of a file
@@ -57,7 +63,7 @@ go build
 - `encrypt <filename>` - Encrypt the content of a file
 - `decrypt <filename>` - Decrypt the content of a file
 - `cache <filename>` - Get the content of a file from cache
-- `version <filename>` - Get the latest version of a file
+- `version <filename>` - Get the version details of a file
 - `exit` - Exit the program
 
 ## Contributing
