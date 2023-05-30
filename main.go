@@ -74,7 +74,7 @@ func main() {
 		case "mkdir":
 			handleCreateDirCommand(parts, storageDirectory)
 		case "list":
-			handleListCommand(parts, storageDirectory)
+			handleListCommand(parts, fs)
 		case "rmdir":
 			handleDeleteCommand(parts, storageDirectory)
 		case "create":
@@ -305,15 +305,15 @@ func handleCreateDirCommand(parts []string, storageDirectory string) {
 	fmt.Println("Directory created successfully.")
 }
 
-func handleListCommand(parts []string, storageDirectory string) {
+func handleListCommand(parts []string, fs *FileSystem) {
 	if len(parts) != 1 {
 		fmt.Println("Invalid command. Usage: list")
 		return
 	}
 
-	filepath.Walk(storageDirectory, func(path string, info os.FileInfo, err error) error {
+	filepath.Walk(fs.BaseDir, func(path string, info os.FileInfo, err error) error {
 		if err == nil {
-			relativePath, err := filepath.Rel(storageDirectory, path)
+			relativePath, err := filepath.Rel(fs.BaseDir, path)
 			if err != nil {
 				fmt.Printf("Error getting relative path: %s\n", err.Error())
 				return nil
@@ -351,6 +351,8 @@ func handleDeleteCommand(parts []string, storageDirectory string) {
 func printHelp() {
 	fmt.Println("Available commands:")
 	fmt.Println("help - Print this help message")
+	fmt.Println("cd <dirname> - Navigate to a directory")
+	fmt.Println("pwd - Print working directory")
 	fmt.Println("mkdir <dirname> - Create a new directory")
 	fmt.Println("list - Lists all files and directories")
 	fmt.Println("rmdir <dirname> - Delete a directory")
