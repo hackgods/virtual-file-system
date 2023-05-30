@@ -29,7 +29,7 @@ The Virtual File System is a Go project that provides a virtual file system capa
 1. **Prerequisites**: Make sure you have Go and MongoDB installed on your machine.
 
 2. **Clone the Repository**: Clone this repository to your local machine using the following command:
-git clone https://github.com/your-username/file-versioning.git
+git clone https://github.com/hackgods/virtual-file-system.git
 
 3. **Install Dependencies**: Navigate to the project directory and install the required dependencies by running:
 go mod download
