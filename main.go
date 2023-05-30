@@ -216,7 +216,7 @@ func main() {
 func printHelp() {
 	fmt.Println("Available commands:")
 	fmt.Println("help - Print this help message")
-	fmt.Println("create <filename> - Create a new file")
+	fmt.Println("create <filename> <content> - Create a new file")
 	fmt.Println("read <filename> - Read the content of a file")
 	fmt.Println("update <filename> <content> - Update the content of a file")
 	fmt.Println("delete <filename> - Delete a file")
